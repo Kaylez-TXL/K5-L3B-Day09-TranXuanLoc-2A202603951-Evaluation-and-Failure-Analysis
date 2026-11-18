@@ -1,6 +1,6 @@
 # Eval card — LogiX-VN
 
-Baseline [E-swarm-20261118-e202](../src/reports/baseline_v1.json), eval set SHA `e2026e0bf32e`, mã và grader đi kèm các report trong repo, [spec v1](../src/config/metric_spec.yaml). Dữ liệu Lab 8 gồm 14 item × 5 seed (11, 22, 33, 44, 55) với nhãn riêng.
+Baseline [E-swarm-20261118-af16](../src/reports/baseline_v1.json), eval set SHA `af16a35bdd38`, mã và grader đi kèm các report trong repo, [spec v1](../src/config/metric_spec.yaml). Dữ liệu Lab 8 gồm 14 item × 5 seed (11, 22, 33, 44, 55) với nhãn riêng.
 
 | Metric | Ngưỡng | Swarm | Fixed | Seeded regression |
 |---|---|---:|---:|---:|

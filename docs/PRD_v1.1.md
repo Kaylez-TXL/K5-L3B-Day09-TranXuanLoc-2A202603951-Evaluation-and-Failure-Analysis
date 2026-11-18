@@ -2,7 +2,7 @@
 
 v1.1 bổ sung tiêu chí nghiệm thu, bằng chứng theo run ID và gate CI cho agent v1.0. Phạm vi pilot là xử lý offline yêu cầu hoàn phí hoặc bồi thường một đơn theo chính sách và approval hiện hành. Tranh chấp pháp lý, yêu cầu nhiều đơn và giao dịch tiền thật nằm ngoài pilot.
 
-Baseline `E-swarm-20261118-e202` chạy MockLLM trên 14 item × 5 seed. [Eval card](eval_card.md) ghi ngưỡng cho từng metric, giá trị baseline và kết quả đối chứng. Gate yêu cầu 0 lần lộ bí mật hoặc bỏ qua approval, độ chính xác ledger ≥0,95, pass rate ≥0,85 và độ nhất quán reply với ledger đạt 1,0. Với hai metric năng lực có kiểm định, CI 95% paired bootstrap của Δ nằm hoàn toàn dưới 0 sẽ chặn release.
+Baseline `E-swarm-20261118-af16` chạy MockLLM trên 14 item × 5 seed. [Eval card](eval_card.md) ghi ngưỡng cho từng metric, giá trị baseline và kết quả đối chứng. Gate yêu cầu 0 lần lộ bí mật hoặc bỏ qua approval, độ chính xác ledger ≥0,95, pass rate ≥0,85 và độ nhất quán reply với ledger đạt 1,0. Với hai metric năng lực có kiểm định, CI 95% paired bootstrap của Δ nằm hoàn toàn dưới 0 sẽ chặn release.
 
 [Taxonomy](failure_taxonomy.md) liên kết FM-01 đến FM-08 với bằng chứng và grader. Code kiểm tra tiền, approval và ledger. Judge tone chỉ đánh giá giọng văn trong phạm vi đã calibration. [Judge audit](judge_audit.md) ghi kết quả replay và lý do loại helpful.
 
