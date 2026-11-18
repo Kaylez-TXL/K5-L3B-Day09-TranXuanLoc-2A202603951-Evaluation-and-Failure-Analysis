@@ -1,30 +1,18 @@
-# Trace case: từ trace tới quyết định sai đầu tiên
+# Trace case · C-002@11
 
-Một trace case trả lời một câu: **bước nào là bước sai đầu tiên**, và test nào sẽ bắt được nó lần sau.
-
-```bash
+```powershell
 cd src
-python -m lab9.trace_case --shape seeded_regression --claim C-002 --seed 11
-python -m lab9.trace_case --shape fixed --claim C-002 --seed 11   # đối chứng
+.\.venv\Scripts\python.exe -m lab9.trace_case --shape seeded_regression --claim C-002 --seed 11
+.\.venv\Scripts\python.exe -m lab9.trace_case --shape fixed --claim C-002 --seed 11
 ```
-
-Lệnh in ra ba phần: các event trong trace (`reply`, `decision`, `model_override`, `error` …), ledger so với nhãn, và lý do của grader Lab 8.
-
-## Mẫu điền (mỗi bạn 1 case, lấy từ trial đang fail trong report)
 
 | Trường | Nội dung |
 |---|---|
-| Trial | `<shape> <claim>@<seed>`, run ID trong report |
-| Triệu chứng | Grader nào fail; reply nói gì so với ledger ghi gì |
-| Bước sai đầu tiên | Số thứ tự event + kind + trích payload (≤1 dòng) |
-| Vì sao là bước *đầu tiên* | Các bước trước đó đúng ra sao (dẫn số event) |
-| Failure mode | Mã FM-xx trong `docs/failure_taxonomy.md` |
-| Đối chứng | Cùng claim@seed trên shape `fixed`: bước đó khác thế nào |
-| Regression test | Tên test + grader/assert nào bắt được; đã thấy fail trên variant lỗi và pass trên `fixed` chưa |
-| Chưa chắc chắn | Điều trace không chứng minh được |
-
-## Quy tắc
-
-- Đọc **ledger trước reply**: reply trôi chảy vẫn có thể đi kèm một khoản hoàn sai.
-- "Bước sai đầu tiên" phải dẫn số event cụ thể, không phải "agent bị nhầm".
-- Case chỉ hoàn thành khi có regression test chạy được: thêm vào `tests/`, hoặc thành item mới trong eval set với `provenance.from_trace`.
+| Trial | `seeded_regression C-002@11`. Lệnh tái hiện chạy trial riêng. Điền run ID từ report v1 ở M4. |
+| Triệu chứng | Lab 8 grader báo `status resolved != denied`. Ledger ghi 1 khoản 20.000đ, trong khi nhãn kỳ vọng 0 khoản, 0đ. Reply báo đã hoàn 20.000đ. |
+| Bước sai đầu tiên | Event 3 `model_override`, payload `{"delay_days": 5}`. Ticket nói đơn trễ 5 ngày, DB ghi đơn O-202 trễ 2 ngày. |
+| Vì sao là bước đầu tiên | Event 1 chuyển yêu cầu đúng phạm vi, event 2 tra đúng đơn. Event 3 đổi dữ kiện dùng để tính tiền. Event 4 mới áp dụng ngưỡng trễ tối thiểu 3 ngày và đề xuất hoàn 20.000đ. |
+| Failure mode | [FM-03 ticket_trust](failure_taxonomy.md). |
+| Đối chứng | `fixed C-002@11` đi thẳng đến event 3 `quote`, với `amount_vnd: 0` và `reason: no_entitlement`. Ledger khớp nhãn, trạng thái `denied`. |
+| Regression test | `test_c002_ticket_override_is_detected` kiểm tra `DbFactKept` phát hiện override ở variant lỗi và chấp nhận bản sửa. |
+| Giới hạn | Một trial chỉ chứng minh lỗi ở claim và seed này. Assertion theo event cần event `model_override` để nhận diện lỗi. |

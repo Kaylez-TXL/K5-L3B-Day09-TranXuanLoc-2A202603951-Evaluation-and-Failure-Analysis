@@ -1,4 +1,4 @@
-"""M3 trajectory assertions on hand-built Trials (no shape run)."""
+"""Trajectory assertions on hand-built trials and a recorded failure case."""
 import pytest
 
 pytestmark = pytest.mark.student
@@ -48,3 +48,25 @@ def test_wrong_amount_in_ledger(graders):
 
 def test_override_event_breaks_db_fact(graders):
     assert graders.DbFactKept().evaluate(ctx(trial(events=[{"kind": "model_override", "payload": {}}]))).value is False
+
+
+def test_c002_ticket_override_is_detected(graders):
+    from lab9.trace_case import investigate
+
+    bad = investigate("seeded_regression", "C-002", 11)
+    fixed = investigate("fixed", "C-002", 11)
+    grader = graders.DbFactKept()
+
+    assert grader.evaluate(ctx(bad["trial"], bad["label"])).value is False
+    assert grader.evaluate(ctx(fixed["trial"], fixed["label"])).value is True
+    assert fixed["trial"]["snapshot"]["refund_vnd"] == fixed["label"]["refund_vnd"]
+
+
+def test_reply_amount_is_checked_against_ledger(graders):
+    grader = graders.ReplyLedgerConsistent()
+    for amount, expected in [("20.000đ", True), ("20,000 VND", True), ("35.000đ", False)]:
+        output = trial(refund_vnd=20000, events=[
+            {"kind": "reply", "payload": {"text": f"LogiX đã hoàn {amount} cho đơn O-808."}},
+        ])
+        output["result"]["status"] = "resolved"
+        assert grader.evaluate(ctx(output)).value is expected
