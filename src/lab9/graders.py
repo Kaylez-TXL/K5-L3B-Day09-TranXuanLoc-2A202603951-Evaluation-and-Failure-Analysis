@@ -70,6 +70,16 @@ class RefundAmountCorrect(Evaluator[Any, Trial]):
 
 
 @dataclass
+class ProposalAmountCorrect(Evaluator[Any, Trial]):
+    """Check the amount proposed before the host applies refund history."""
+
+    def evaluate(self, ctx: EvaluatorContext[Any, Trial]) -> EvaluationReason:
+        expected = (ctx.expected_output or {}).get("proposal_amount")
+        actual = ctx.output["result"].get("proposal_amount")
+        return EvaluationReason(value=expected is not None and actual == expected)
+
+
+@dataclass
 class ReplyLedgerConsistent(Evaluator[Any, Trial]):
     """Check explicit VND amounts in resolved replies against the ledger."""
 
@@ -109,4 +119,5 @@ GRADERS: dict[str, type[Evaluator]] = {
     "refund_amount_correct": RefundAmountCorrect,
     "db_fact_kept": DbFactKept,
     "reply_ledger_consistent": ReplyLedgerConsistent,
+    "proposal_amount_correct": ProposalAmountCorrect,
 }
